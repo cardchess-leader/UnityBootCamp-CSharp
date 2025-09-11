@@ -1,19 +1,17 @@
 ﻿class Program
 {
-    static void Swap(ref int a, ref int b)
-    {
-        int temp = a;
-        a = b;
-        b = temp;
-    }
-
     static void Main(string[] args)
     {
-        int x = 10;
-        int y = 20;
-        Swap(ref x, ref y);
+        int[] a = { 15, 3, 9, 27, -5, 8, 99 };
+        int max = int.MinValue, min = int.MaxValue;
 
-        Console.WriteLine(x);
-        Console.WriteLine(y);
+        foreach(var num in a)
+        {
+            if(num > max) max = num;
+            if(num < min) min = num;
+        }
+
+        Console.WriteLine(max);
+        Console.WriteLine(min);
     }
 }
