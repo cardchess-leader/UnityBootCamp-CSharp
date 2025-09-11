@@ -1,4 +1,6 @@
-﻿class Program
+﻿using System.Collections.Specialized;
+
+class Program
 {
     static void Main(string[] args)
     {
@@ -8,8 +10,8 @@
             { 4, 5, 6 },
             { 7, 8, 9 },
         };
-        Flip2DArray(map);
-        for(int i = 0; i < map.GetLength(0); i++)
+        AddOneToAdjacentCells(map, 1, 1);
+        for (int i = 0; i < map.GetLength(0); i++)
         {
             for (int j = 0; j < map.GetLength(1); j++)
             {
@@ -19,18 +21,17 @@
         }
     }
 
-    static void Flip2DArray(int[,] a)
+    static void AddOneToAdjacentCells(int[,] map, int y, int x)
     {
-        for (int i = 0; i < a.GetLength(0); i++)
+        int[] dX = { 1, 0, -1, 0 };
+        int[] dY = { 0, 1, 0, -1 };
+        for (int i = 0;i < dX.Length; i++)
         {
-            for (int j = 0; j <  a.GetLength(1); j++)
+            int newX = dX[i] + x;
+            int newY = dY[i] + y;
+            if (newX >= 0 && newX < map.GetLength(1) && newY >= 0 && newY < map.GetLength(0))
             {
-                if (i > j)
-                {
-                    int temp = a[i, j];
-                    a[i, j] = a[j, i];
-                    a[j, i] = temp;
-                }
+                map[newY, newX]++;
             }
         }
     }
