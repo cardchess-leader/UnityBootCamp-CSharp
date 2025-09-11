@@ -1,4 +1,6 @@
-﻿class Program
+﻿using System.Collections.Specialized;
+
+class Program
 {
     static void Main(string[] args)
     {
@@ -13,5 +15,19 @@
 
         Console.WriteLine(max);
         Console.WriteLine(min);
+        CountingStar("abczzz");
+    }
+
+    static void CountingStar(string str)
+    {
+        var arr = new int[26];
+        foreach(var c  in str)
+        {
+            arr[c - 'a']++;
+        }
+        foreach(var i in arr)
+        {
+            Console.Write(i + " ");
+        }
     }
 }
