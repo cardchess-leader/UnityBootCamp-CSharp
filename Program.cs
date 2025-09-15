@@ -1,131 +1,47 @@
-﻿class CustomList<T>
+﻿class Program
 {
-    private T[] items;
-    private int count;
-    public CustomList()
+    static void DFS(int x, int y, bool[,] grid)
     {
-        items = new T[1];
-        count = 0;
-    }
-    public void Add(T item)
-    {
-        if (count == items.Length)
+        grid[x, y] = false;
+        int[] deltaX = { -1, 0, 1, 0 };
+        int[] deltaY = { 0, -1, 0, 1 };
+        for (int i = 0; i < deltaX.Length; i++)
         {
-            Array.Resize(ref items, items.Length * 2);
+            int newX = x + deltaX[i];
+            int newY = y + deltaY[i];
+            if (newX < 0 || newX >= grid.GetLength(0) || newY < 0 || newY >= grid.GetLength(1)) continue;
+            if (!grid[newX, newY]) continue;
+            DFS(newX, newY, grid);
         }
-        items[count++] = item;
     }
-    public void RemoveAt(int index)
+
+    static void Main(string[] args)
     {
-        if (index < 0 || index >= count)
+        int n = int.Parse(Console.ReadLine()!);
+        for (int i = 0; i < n; i++)
         {
-            throw new ArgumentOutOfRangeException(nameof(index));
-        }
-        for (int i = index; i < count - 1; i++)
-        {
-            items[i] = items[i + 1];
-        }
-        items[--count] = default(T);
-    }
-    public T this[int index]
-    {
-        get
-        {
-            if (index < 0 || index >= count)
+            var list = Console.ReadLine()!.Split();
+            int width = int.Parse(list[0]), height = int.Parse(list[1]), inputCount = int.Parse(list[2]);
+            var grid = new bool[width, height];
+            for (int j = 0; j < inputCount; j++)
             {
-                throw new ArgumentOutOfRangeException(nameof(index));
+                list = Console.ReadLine()!.Split();
+                int x = int.Parse(list[0]), y = int.Parse(list[1]);
+                grid[x, y] = true;
             }
-            return items[index];
-        }
-        set
-        {
-            if (index < 0 || index >= count)
+            int count = 0;
+            for (int x = 0; x < width; x++)
             {
-                throw new ArgumentOutOfRangeException(nameof(index));
+                for (int y = 0; y < height; y++)
+                {
+                    if (grid[x, y])
+                    {
+                        count++;
+                        DFS(x, y, grid);
+                    }
+                }
             }
-            items[index] = value;
-        }
-    }
-    public int Count => count;
-}
-class Node
-{
-    public int Data;
-    public Node? Next;
-    public Node? Prev;
-}
-
-class MyLinkedList
-{
-    public Node? Head = null;
-    public Node? Tail = null;
-    public int count;
-
-    public Node AddLast(int data)
-    {
-        Node newNode = new Node();
-
-        // TODO : 구현
-        newNode.Data = data;
-        if (Head == null)
-        {
-            Head = newNode;
-            Tail = newNode;
-        }
-        else
-        {
-            Tail!.Next = newNode;
-            newNode.Prev = Tail;
-            Tail = newNode;
-        }
-        count++;
-        return newNode;
-    }
-
-    public void Remove(Node node)
-    {
-        // TODO : 구현
-        if (Head == null) return;
-
-        // case 1: Head == node
-        if (Head == node)
-        {
-            Head = node.Next;
-        }
-        if (Tail == node)
-        {
-            Tail = node.Prev;
-        }
-        if (node.Next != null)
-        {
-            node.Next.Prev = node.Prev;
-        }
-        if (node.Prev != null)
-        {
-            node.Prev.Next = node.Next;
-        }
-        count--;
-    }
-}
-
-class Program
-{
-    public static void Main(string[] args)
-    {
-        MyLinkedList list = new();
-        var node1 = list.AddLast(1);
-        list.AddLast(2);
-        var node2 = list.AddLast(3);
-        list.AddLast(4);
-        var node3 = list.AddLast(5);
-        list.Remove(node3);
-        list.Remove(node1);
-        list.Remove(node2);
-        node1 = list.Head;
-        while (node1 != null)
-        {
-            Console.WriteLine($"node data is: {node1.Data}");
-            node1 = node1.Next;
+            Console.WriteLine(count);
         }
     }
 }
