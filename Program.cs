@@ -1,47 +1,43 @@
 ﻿class Program
 {
-    static void DFS(int x, int y, bool[,] grid)
-    {
-        grid[x, y] = false;
-        int[] deltaX = { -1, 0, 1, 0 };
-        int[] deltaY = { 0, -1, 0, 1 };
-        for (int i = 0; i < deltaX.Length; i++)
-        {
-            int newX = x + deltaX[i];
-            int newY = y + deltaY[i];
-            if (newX < 0 || newX >= grid.GetLength(0) || newY < 0 || newY >= grid.GetLength(1)) continue;
-            if (!grid[newX, newY]) continue;
-            DFS(newX, newY, grid);
-        }
-    }
-
     static void Main(string[] args)
     {
-        int n = int.Parse(Console.ReadLine()!);
-        for (int i = 0; i < n; i++)
+        int N, M;
+        var inputs = Console.ReadLine()!.Split();
+        N = int.Parse(inputs[0]);
+        M = int.Parse(inputs[1]);
+        bool [,] map = new bool[N, M];
+        for (var i = 0; i < N; i++)
         {
-            var list = Console.ReadLine()!.Split();
-            int width = int.Parse(list[0]), height = int.Parse(list[1]), inputCount = int.Parse(list[2]);
-            var grid = new bool[width, height];
-            for (int j = 0; j < inputCount; j++)
+            var s = Console.ReadLine()!;
+            for (var j = 0; j < M; j++)
             {
-                list = Console.ReadLine()!.Split();
-                int x = int.Parse(list[0]), y = int.Parse(list[1]);
-                grid[x, y] = true;
+                map[i, j] = s[j] == '1';
             }
-            int count = 0;
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    if (grid[x, y])
-                    {
-                        count++;
-                        DFS(x, y, grid);
-                    }
-                }
-            }
-            Console.WriteLine(count);
         }
+
+        bool [,] visited = new bool[N, M];
+        int[,] dist = new int[N, M];
+        Queue<(int, int)> q = new Queue<(int, int)>();
+        q.Enqueue((0, 0));
+        visited[0, 0] = true;
+        dist[0, 0] = 1;
+        while(q.Count > 0)
+        {
+            var cur = q.Dequeue();
+            (int, int)[] delta = { (1, 0), (0, 1), (-1, 0), (0, -1) };
+            foreach(var (dx, dy) in delta)
+            {
+                var newPos = (cur.Item1 + dx, cur.Item2 + dy);
+                if (newPos.Item1 < 0 || newPos.Item1 >= N || newPos.Item2 < 0 || newPos.Item2 >= M) continue;
+                if (!map[newPos.Item1, newPos.Item2]) continue;
+                if (visited[newPos.Item1, newPos.Item2]) continue;
+                q.Enqueue(newPos);
+                visited[newPos.Item1, newPos.Item2] = true;
+                dist[newPos.Item1, newPos.Item2] = dist[cur.Item1, cur.Item2] + 1;
+            }
+        }
+
+        Console.WriteLine(dist[N - 1, M - 1]);
     }
 }
