@@ -1,43 +1,63 @@
-﻿class Program
+﻿namespace 트리
 {
-    static void Main(string[] args)
+    class TreeNode<T>
     {
-        int N, M;
-        var inputs = Console.ReadLine()!.Split();
-        N = int.Parse(inputs[0]);
-        M = int.Parse(inputs[1]);
-        bool [,] map = new bool[N, M];
-        for (var i = 0; i < N; i++)
+        public T Data;
+        public List<TreeNode<T>> Children { get; set; } = new List<TreeNode<T>>();
+    }
+    class Program
+    {
+        static TreeNode<string> MakeTree()
         {
-            var s = Console.ReadLine()!;
-            for (var j = 0; j < M; j++)
+            TreeNode<string> root = new TreeNode<string>() { Data = "A" };
             {
-                map[i, j] = s[j] == '1';
+                TreeNode<string> nodeB = new TreeNode<string>() { Data = "B" };
+                {
+                    TreeNode<string> nodeD = new TreeNode<string>() { Data = "D" };
+                    {
+                        TreeNode<string> nodeH = new TreeNode<string>() { Data = "H" };
+                        TreeNode<string> nodeI = new TreeNode<string>() { Data = "I" };
+
+                        nodeD.Children.Add(nodeH);
+                        nodeD.Children.Add(nodeI);
+                    }
+                    TreeNode<string> nodeE = new TreeNode<string>() { Data = "E" };
+
+                    nodeB.Children.Add(nodeD);
+                    nodeB.Children.Add(nodeE);
+                }
+                TreeNode<string> nodeC = new TreeNode<string>() { Data = "C" };
+                {
+                    TreeNode<string> nodeF = new TreeNode<string>() { Data = "F" };
+                    TreeNode<string> nodeG = new TreeNode<string>() { Data = "G" };
+
+                    nodeC.Children.Add(nodeF);
+                    nodeC.Children.Add(nodeG);
+                }
+
+                root.Children.Add(nodeB);
+                root.Children.Add(nodeC);
+            }
+
+            return root;
+        }
+
+        static void PrintTree(TreeNode<string> node)
+        {
+            // 현재 노드의 데이터 출력
+            Console.WriteLine(node.Data);
+
+            // 내 자식도 똑같이 출력하게 함
+            foreach (var child in node.Children)
+            {
+                PrintTree(child);
             }
         }
 
-        bool [,] visited = new bool[N, M];
-        int[,] dist = new int[N, M];
-        Queue<(int, int)> q = new Queue<(int, int)>();
-        q.Enqueue((0, 0));
-        visited[0, 0] = true;
-        dist[0, 0] = 1;
-        while(q.Count > 0)
+        static void Main()
         {
-            var cur = q.Dequeue();
-            (int, int)[] delta = { (1, 0), (0, 1), (-1, 0), (0, -1) };
-            foreach(var (dx, dy) in delta)
-            {
-                var newPos = (cur.Item1 + dx, cur.Item2 + dy);
-                if (newPos.Item1 < 0 || newPos.Item1 >= N || newPos.Item2 < 0 || newPos.Item2 >= M) continue;
-                if (!map[newPos.Item1, newPos.Item2]) continue;
-                if (visited[newPos.Item1, newPos.Item2]) continue;
-                q.Enqueue(newPos);
-                visited[newPos.Item1, newPos.Item2] = true;
-                dist[newPos.Item1, newPos.Item2] = dist[cur.Item1, cur.Item2] + 1;
-            }
+            var root = MakeTree();
+            PrintTree(root);
         }
-
-        Console.WriteLine(dist[N - 1, M - 1]);
     }
 }
