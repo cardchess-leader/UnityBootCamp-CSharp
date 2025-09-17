@@ -54,10 +54,20 @@
             }
         }
 
+        static int GetHeight(TreeNode<string> node) { 
+            if (node.Children.Count == 0) return 0;
+            int height = 0;
+            foreach (var child in node.Children) { 
+                height = Math.Max(GetHeight(child) + 1, height);
+            }
+            return height;
+        }
+
         static void Main()
         {
             var root = MakeTree();
             PrintTree(root);
+            Console.WriteLine(GetHeight(root));
         }
     }
 }
