@@ -1,73 +1,107 @@
-﻿namespace 트리
+﻿class BstNode
 {
-    class TreeNode<T>
+    public int Key;
+    public BstNode? Left;
+    public BstNode? Right;
+
+    public BstNode(int key)
     {
-        public T Data;
-        public List<TreeNode<T>> Children { get; set; } = new List<TreeNode<T>>();
+        Key = key;
     }
-    class Program
+}
+
+class BinarySearchTree
+{
+    private BstNode? _root;
+
+    public void Insert(int key)
     {
-        static TreeNode<string> MakeTree()
+        _root = InsertRec(_root, key);
+    }
+
+    private BstNode InsertRec(BstNode? node, int key)
+    {
+        if (node == null)
+            return new BstNode(key);
+
+        if (key < node.Key)
+            node.Left = InsertRec(node.Left, key);
+
+        if (key > node.Key)
+            node.Right = InsertRec(node.Right, key);
+
+        return node;
+    }
+
+    public bool Contains(int key)
+    {
+        var now = _root;
+        while (now != null)
         {
-            TreeNode<string> root = new TreeNode<string>() { Data = "A" };
-            {
-                TreeNode<string> nodeB = new TreeNode<string>() { Data = "B" };
-                {
-                    TreeNode<string> nodeD = new TreeNode<string>() { Data = "D" };
-                    {
-                        TreeNode<string> nodeH = new TreeNode<string>() { Data = "H" };
-                        TreeNode<string> nodeI = new TreeNode<string>() { Data = "I" };
+            if (key == now.Key)
+                return true;
 
-                        nodeD.Children.Add(nodeH);
-                        nodeD.Children.Add(nodeI);
-                    }
-                    TreeNode<string> nodeE = new TreeNode<string>() { Data = "E" };
-
-                    nodeB.Children.Add(nodeD);
-                    nodeB.Children.Add(nodeE);
-                }
-                TreeNode<string> nodeC = new TreeNode<string>() { Data = "C" };
-                {
-                    TreeNode<string> nodeF = new TreeNode<string>() { Data = "F" };
-                    TreeNode<string> nodeG = new TreeNode<string>() { Data = "G" };
-
-                    nodeC.Children.Add(nodeF);
-                    nodeC.Children.Add(nodeG);
-                }
-
-                root.Children.Add(nodeB);
-                root.Children.Add(nodeC);
-            }
-
-            return root;
+            now = (key < now.Key) ? now.Left : now.Right;
         }
 
-        static void PrintTree(TreeNode<string> node)
+        return false;
+    }
+
+    public BstNode? Find(int key)
+    {
+        var now = _root;
+        while (now != null)
         {
-            // 현재 노드의 데이터 출력
-            Console.WriteLine(node.Data);
+            if (key == now.Key)
+                return now;
 
-            // 내 자식도 똑같이 출력하게 함
-            foreach (var child in node.Children)
-            {
-                PrintTree(child);
-            }
+            now = (key < now.Key) ? now.Left : now.Right;
         }
 
-        static int GetHeight(TreeNode<string> node) { 
-            if (node.Children.Count == 0) return 0;
-            int height = 0;
-            foreach (var child in node.Children) { 
-                height = Math.Max(GetHeight(child) + 1, height);
-            }
-            return height;
-        }
+        return null;
+    }
 
-        static void Main()
+    public void Remove(int key)
+    {
+        _root = RemoveRec(_root, key);
+    }
+
+    private BstNode? RemoveRec(BstNode? node, int key)
+    {
+        if (node == null)
+            return null;
+
+        if (key < node.Key)
         {
-            var root = MakeTree();
-            PrintTree(root);
-            Console.WriteLine(GetHeight(root));
+            node.Left = RemoveRec(node.Left, key);
         }
+        else if (key > node.Key)
+        {
+            node.Right = RemoveRec(node.Right, key);
+        }
+        else
+        {
+            if (node.Left == null && node.Right == null)
+                return null;
+
+            if (node.Left == null)
+                return node.Right;
+            if (node.Right == null)
+                return node.Left;
+
+            BstNode min = FindMin(node.Right);
+            node.Key = min.Key;
+            node.Right = RemoveRec(node.Right, min.Key);
+        }
+
+        return node;
+    }
+
+    private BstNode FindMin(BstNode node)
+    {
+        while (node.Left != null)
+            node = node.Left;
+
+        return node;
     }
 }
